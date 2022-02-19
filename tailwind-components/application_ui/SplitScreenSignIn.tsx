@@ -228,7 +228,7 @@ export const SplitScreenSignIn = ({
 
                 <div className="space-y-1">
                   <InputGroup
-                    label="Password"
+                    label={{ text: "Password" }}
                     onValueChange={setPassword}
                     type="password"
                     autoComplete="password"
@@ -237,7 +237,7 @@ export const SplitScreenSignIn = ({
                 <div className="space-y-1">
                   {signUpMode && (
                     <InputGroup
-                      label="Confirm Password"
+                      label={{ text: "Confirm Password" }}
                       validationError={
                         confirmPasswordError
                           ? {

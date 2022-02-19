@@ -1,7 +1,9 @@
+import classNames from "classnames"
 import React from "react"
+import { overrideTailwindClasses } from "tailwind-override"
 
 interface TextAreaProps {
-  label?: string
+  label?: Label
   subtitle?: string
   defaultValue?: string
   name?: string
@@ -10,8 +12,13 @@ interface TextAreaProps {
   validationError?: string
 }
 
+interface Label {
+  text: string
+  className?: string
+}
+
 export const exampleProps: TextAreaProps = {
-  label: "About",
+  label: { text: "About", className: "text-white" },
   subtitle: "Write a few sentences about yourself",
   defaultValue: "I am a text area.",
   name: "about",
@@ -30,8 +37,13 @@ export const TextArea = ({
 }: TextAreaProps) => {
   return (
     <div className="sm:col-span-6">
-      <label htmlFor={name} className="block text-sm font-medium text-gray-700">
-        {label}
+      <label
+        htmlFor={name}
+        className={overrideTailwindClasses(
+          classNames("block text-sm font-medium text-gray-700", label.className)
+        )}
+      >
+        {label.text}
       </label>
       <div className="mt-1">
         <textarea
@@ -39,7 +51,7 @@ export const TextArea = ({
           id={name}
           name={name}
           rows={rowCount}
-          className="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm border border-gray-300 rounded-md"
+          className="block w-full rounded-md border border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
           defaultValue={defaultValue}
         />
       </div>

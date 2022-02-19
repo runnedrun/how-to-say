@@ -13,7 +13,8 @@
     "lint": "next lint",
     "build-functions": "tsc --project functions_tsconfig.json",
     "test": "env TS_NODE_COMPILER_OPTIONS='{\"module\": \"commonjs\" }' mocha -r ts-node/register 'fb_functions/tests/**/*.ts'",
-    "run-migrations": "node ./functions_lib/fb_functions/dataMigrations.js"
+    "run-migrations": "node ./functions_lib/fb_functions/dataMigrations.js",
+    "emulate": "firebase emulators:start --project demo-say"
   },
   "dependencies": {
     "@headlessui/react": "^1.4.1",
@@ -24,6 +25,7 @@
     "@types/module-alias": "^2.0.1",
     "@types/sinon": "^10.0.11",
     "arg": "^5.0.1",
+    "audio-react-recorder": "^1.0.4",
     "axios": "^0.24.0",
     "classnames": "^2.3.1",
     "cors": "^2.8.5",
@@ -47,6 +49,7 @@
     "observable-hooks": "^4.0.5",
     "random-words": "^1.1.1",
     "react": "^17.0.2",
+    "react-audio-player": "^0.17.0",
     "react-clipboard.js": "^2.0.16",
     "react-dom": "17.0.2",
     "react-headless-phone-input": "^2.0.0",

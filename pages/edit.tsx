@@ -1,23 +1,21 @@
 import React from "react"
 import type { InferGetServerSidePropsType, NextPage } from "next"
-import { config } from "../views/[nameId]/config"
+import { config } from "../views/edit/config"
 import ErrorPage from "next/error"
 import Head from "next/head"
-import { NameDisplay } from "@/views/[nameId]/NameDisplay"
+import { EditableNameDisplay } from "@/views/edit/EditableNameDisplay"
 
-const NamePage: NextPage<
+const EditableNamePage: NextPage<
   InferGetServerSidePropsType<typeof getServerSideProps>
-> = config.Parent(({ data: { namesForNameId } }) => {
-  const name = namesForNameId[0]
-
-  const view = <NameDisplay />
-  return name ? (
+> = config.Parent(({ data: { nameForEditKey } }) => {
+  const view = <EditableNameDisplay />
+  return nameForEditKey ? (
     <>
       <Head>
-        <title>How to pronounce {name.displayName}</title>
+        <title>Edit: {nameForEditKey.displayName}</title>
         <meta
           name="description"
-          content={`How to pronounce ${name.displayName}`}
+          content={`Edit: ${nameForEditKey.displayName}`}
         />
         <link rel="icon" href="/favicon.jpeg" />
       </Head>
@@ -28,8 +26,8 @@ const NamePage: NextPage<
   )
 })
 
-NamePage.displayName = "NamePage"
+EditableNamePage.displayName = "EditableNamePage"
 
 export const getServerSideProps = config.prefetchData
 
-export default NamePage
+export default EditableNamePage

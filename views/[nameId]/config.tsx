@@ -12,5 +12,4 @@ export const config = buildView({ name: "Name" })({})({
   return { globalProps: { nameId } }
 })({
   NameDisplay: {},
-  // EditableNameDisplay: {},
 })({})

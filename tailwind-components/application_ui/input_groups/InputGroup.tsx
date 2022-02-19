@@ -20,6 +20,11 @@ export interface ValidationError {
   icon?: ReactNode
 }
 
+export interface Label {
+  text: string
+  className?: string
+}
+
 interface AddOn {
   inline?: boolean
   text?: string
@@ -29,7 +34,7 @@ interface AddOn {
 }
 
 export interface InputProps {
-  label?: string
+  label?: Label
   name?: string
   id?: string
   defaultValue?: any
@@ -54,7 +59,7 @@ export interface InputProps {
 }
 
 export const exampleProps: InputProps = {
-  label: "Account number",
+  label: { text: "Account number", className: "text-sm" },
   name: "email",
   id: "email",
   defaultValue: "",
@@ -64,7 +69,7 @@ export const exampleProps: InputProps = {
     position: "right",
     icon: (
       <QuestionMarkCircleIcon
-        className="w-5 h-5 text-gray-400"
+        className="h-5 w-5 text-gray-400"
         aria-hidden="true"
       />
     ),
@@ -139,9 +144,9 @@ export const InputGroupForwardRef = React.forwardRef<
             className={classNames(
               { "flex flex-col": type === "checkbox" },
               insetLabel
-                ? "px-3 py-2 border border-gray-300 rounded-md shadow-sm focus-within:ring-1 focus-within:ring-indigo-600 focus-within:border-indigo-600"
+                ? "rounded-md border border-gray-300 px-3 py-2 shadow-sm focus-within:border-indigo-600 focus-within:ring-1 focus-within:ring-indigo-600"
                 : overlappingLabel
-                ? "relative border border-gray-300 rounded-md px-3 py-2 shadow-sm focus-within:ring-1 focus-within:ring-indigo-600 focus-within:border-indigo-600"
+                ? "relative rounded-md border border-gray-300 px-3 py-2 shadow-sm focus-within:border-indigo-600 focus-within:ring-1 focus-within:ring-indigo-600"
                 : grayBackgroundBorderBottom
                 ? "mt-1 border-b border-gray-300 focus-within:border-indigo-600"
                 : ""
@@ -149,15 +154,18 @@ export const InputGroupForwardRef = React.forwardRef<
           >
             <label
               htmlFor={name}
-              className={
-                insetLabel
-                  ? "block text-xs font-medium text-gray-900"
-                  : overlappingLabel
-                  ? "absolute -top-2 left-2 -mt-px inline-block px-1 bg-white text-xs font-medium text-gray-900"
-                  : ""
-              }
+              className={overrideTailwindClasses(
+                classNames(
+                  insetLabel
+                    ? "block text-xs font-medium text-gray-900"
+                    : overlappingLabel
+                    ? "absolute -top-2 left-2 -mt-px inline-block bg-white px-1 text-xs font-medium text-gray-900"
+                    : "",
+                  label?.className
+                )
+              )}
             >
-              {label}
+              {label.text}
             </label>
             <input
               onClick={() => setClicked(true)}
@@ -173,8 +181,8 @@ export const InputGroupForwardRef = React.forwardRef<
               id={id}
               onChange={validatedOnChange}
               className={classNames({
-                "block w-full p-0 text-gray-900 placeholder-gray-500 border-0 focus:ring-0 sm:text-sm": insetLabel,
-                "block w-full border-0 p-0 text-gray-900 placeholder-gray-500 focus:ring-0 sm:text-sm": overlappingLabel,
+                "block w-full border-0 p-0 text-gray-900 placeholder-gray-500 focus:ring-0 sm:text-sm":
+                  insetLabel || overlappingLabel,
                 "mt-1 block w-full border-0 border-b border-transparent bg-gray-50 focus:border-indigo-600 focus:ring-0 sm:text-sm": grayBackgroundBorderBottom,
                 "bg-amber-200": highlight && !clicked,
               })}
@@ -190,11 +198,14 @@ export const InputGroupForwardRef = React.forwardRef<
             <div className={classNames("flex justify-between")}>
               <label
                 htmlFor={name}
-                className={
-                  pillShape ? `ml-px pl-4 ${labelClasses}` : labelClasses
-                }
+                className={overrideTailwindClasses(
+                  classNames(
+                    pillShape ? `ml-px pl-4 ${labelClasses}` : labelClasses,
+                    label.className
+                  )
+                )}
               >
-                {label}
+                {label.text}
               </label>
               {cornerHint && (
                 <span className="text-sm text-gray-500" id="email-optional">
@@ -202,9 +213,9 @@ export const InputGroupForwardRef = React.forwardRef<
                 </span>
               )}
             </div>
-            <div className="relative flex mt-1 rounded-md shadow-sm">
+            <div className="relative mt-1 flex rounded-md shadow-sm">
               {icon?.position === "left" && (
-                <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+                <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
                   {icon?.icon}
                 </div>
               )}
@@ -213,12 +224,12 @@ export const InputGroupForwardRef = React.forwardRef<
                   {addOn?.leadingDropdown}
                 </div>
               ) : addOn?.inline && addOn?.text ? (
-                <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+                <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
                   <span
                     className={
                       addOn?.inline
                         ? "text-gray-500 sm:text-sm"
-                        : "inline-flex items-center px-3 text-gray-500 border border-r-0 border-gray-300 rounded-l-md bg-gray-50 sm:text-sm"
+                        : "inline-flex items-center rounded-l-md border border-r-0 border-gray-300 bg-gray-50 px-3 text-gray-500 sm:text-sm"
                     }
                   >
                     {addOn?.text}
@@ -229,7 +240,7 @@ export const InputGroupForwardRef = React.forwardRef<
                   className={
                     addOn?.inline
                       ? "text-gray-500 sm:text-sm"
-                      : "inline-flex items-center px-3 text-gray-500 border border-r-0 border-gray-300 rounded-l-md bg-gray-50 sm:text-sm"
+                      : "inline-flex items-center rounded-l-md border border-r-0 border-gray-300 bg-gray-50 px-3 text-gray-500 sm:text-sm"
                   }
                 >
                   {addOn?.text}
@@ -250,7 +261,7 @@ export const InputGroupForwardRef = React.forwardRef<
                   classNames(
                     inputClasses,
                     {
-                      "bg-yellow-200 animate-pulse-once": highlight && !clicked,
+                      "animate-pulse-once bg-yellow-200": highlight && !clicked,
                     },
                     { "ml-2 w-4": type === "checkbox" }
                   )
@@ -260,7 +271,7 @@ export const InputGroupForwardRef = React.forwardRef<
                 onChange={validatedOnChange}
               />
               {icon?.position === "right" ? (
-                <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
+                <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-3">
                   {icon?.icon}
                 </div>
               ) : addOn?.trailingDropdown ? (
@@ -270,20 +281,20 @@ export const InputGroupForwardRef = React.forwardRef<
               ) : addOn?.trailingButtonContent ? (
                 <button
                   type="button"
-                  className="relative inline-flex items-center px-4 py-2 -ml-px space-x-2 text-sm font-medium text-gray-700 border border-gray-300 rounded-r-md bg-gray-50 hover:bg-gray-100 focus:outline-none focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500"
+                  className="focus:outline-none relative -ml-px inline-flex items-center space-x-2 rounded-r-md border border-gray-300 bg-gray-50 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-100 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500"
                 >
                   {" "}
                   {addOn?.trailingButtonContent}{" "}
                 </button>
               ) : keyboardShortcut ? (
                 <div className="absolute inset-y-0 right-0 flex py-1.5 pr-1.5">
-                  <kbd className="inline-flex items-center px-2 font-sans text-sm font-medium text-gray-400 border border-gray-200 rounded">
+                  <kbd className="inline-flex items-center rounded border border-gray-200 px-2 font-sans text-sm font-medium text-gray-400">
                     {keyboardShortcut}
                   </kbd>
                 </div>
               ) : null}
               {validationError && (
-                <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
+                <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-3">
                   {validationError?.icon}
                 </div>
               )}

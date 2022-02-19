@@ -33,7 +33,7 @@ export const PhoneNumberInput = ({
             value={inputValue}
             onBlur={onBlur}
             className="col-span-4"
-            label={"Phone Number"}
+            label={{ text: "Phone Number" }}
             type={"tel"}
             autoComplete="tel"
             onValueChange={(value) => {
