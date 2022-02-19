@@ -1,0 +1,7 @@
+{
+  "projects": {
+    "default": "demo-say",
+    "staging": "how-to-say-d54c1"
+  },
+  "targets": {}
+}
