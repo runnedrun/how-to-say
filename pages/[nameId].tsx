@@ -1,13 +1,13 @@
 import React from "react"
 import type { InferGetServerSidePropsType, NextPage } from "next"
-import { config } from "../views/[nameId]/config"
+import { config as nameConfig } from "../views/[nameId]/config"
 import ErrorPage from "next/error"
 import Head from "next/head"
 import { NameDisplay } from "@/views/[nameId]/NameDisplay"
 
 const NamePage: NextPage<
   InferGetServerSidePropsType<typeof getServerSideProps>
-> = config.Parent(({ data: { namesForNameId } }) => {
+> = nameConfig.Parent(({ data: { namesForNameId } }) => {
   const name = namesForNameId[0]
 
   const view = <NameDisplay />
@@ -30,6 +30,6 @@ const NamePage: NextPage<
 
 NamePage.displayName = "NamePage"
 
-export const getServerSideProps = config.prefetchData
+export const getServerSideProps = nameConfig.prefetchData
 
 export default NamePage

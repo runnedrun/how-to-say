@@ -13,8 +13,8 @@ import { logEvent, setCurrentScreen } from "@/analytics/logEvent"
 import { redirectWithDestination } from "@/helpers/redirectWithDestination"
 
 import {
-  jsonifyTimestamps,
   hydrateTimestamps,
+  jsonifyTimestamps,
 } from "@/data/fetchHelpers/jsonifyTimestamps"
 
 type StateDescriptor = Record<
@@ -293,16 +293,6 @@ type BuildInitialValues<
 ) => {
   globalProps: ExamplePropsType
   initialState?: Partial<InitialValuesFromStateDescriptor<StateDescriptorType>>
-}
-
-const getInitialComponentStateFromReplay = (
-  componentName: string,
-  props: object
-) => {
-  const query = useRouter().query
-  const replayStateAndProps = query.sessionReplayData as string
-
-  return {}
 }
 
 const buildInitialValuesWithReplay = (
@@ -686,10 +676,7 @@ export const buildView: (
     ) => (localProps: ComponentDescriptorType["exampleProps"]) => {
       const props = manageGlobalProps()
       const stateDescriptor = descriptor.state || {}
-      const initialStateForComponent = getInitialComponentStateFromReplay(
-        componentName as string,
-        localProps
-      )
+      const initialStateForComponent = {}
       const stateDescriptorWithInitialValues = {}
       objKeys(stateDescriptor || {}).forEach((stateName) => {
         const initialValueObj = stateDescriptor[stateName]

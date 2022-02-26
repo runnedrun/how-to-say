@@ -1,13 +1,13 @@
 import React from "react"
 import type { InferGetServerSidePropsType, NextPage } from "next"
-import { config } from "../views/edit/config"
+import { config as editConfig } from "../views/edit/config"
 import ErrorPage from "next/error"
 import Head from "next/head"
 import { EditableNameDisplay } from "@/views/edit/EditableNameDisplay"
 
 const EditableNamePage: NextPage<
   InferGetServerSidePropsType<typeof getServerSideProps>
-> = config.Parent(({ data: { nameForEditKey } }) => {
+> = editConfig.Parent(({ data: { nameForEditKey } }) => {
   const view = <EditableNameDisplay />
   return nameForEditKey ? (
     <>
@@ -28,6 +28,6 @@ const EditableNamePage: NextPage<
 
 EditableNamePage.displayName = "EditableNamePage"
 
-export const getServerSideProps = config.prefetchData
+export const getServerSideProps = editConfig.prefetchData
 
 export default EditableNamePage

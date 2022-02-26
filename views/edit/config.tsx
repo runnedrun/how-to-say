@@ -1,5 +1,4 @@
 import { parameterizedDoc } from "@/data/firebaseHelpers/parameterizedDoc"
-import { parameterizedWhere } from "@/data/firebaseHelpers/parameterizedWhere"
 import { buildView } from "../buildView"
 
 export const config = buildView({ name: "Edit name" })({

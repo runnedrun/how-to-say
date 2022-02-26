@@ -1,4 +1,5 @@
 /** @type {import('next').NextConfig} */
+const CircularDependencyPlugin = require("circular-dependency-plugin")
 
 const config = {
   distDir: "/.next",
@@ -11,6 +12,12 @@ const config = {
   //     },
   //   ]
   // },
+  webpack: (config, { dev }) => {
+    return {
+      ...config,
+      plugins: (config.plugins || []).concat([new CircularDependencyPlugin()]),
+    }
+  },
   reactStrictMode: true,
 }
 

@@ -27,6 +27,7 @@
     "arg": "^5.0.1",
     "audio-react-recorder": "^1.0.4",
     "axios": "^0.24.0",
+    "circular-dependency-plugin": "^5.2.2",
     "classnames": "^2.3.1",
     "cors": "^2.8.5",
     "deep-diff": "^1.0.2",
