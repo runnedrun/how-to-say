@@ -1,10 +1,11 @@
-import { collection, doc, getFirestore } from "firebase/firestore"
+import { collection, doc } from "firebase/firestore"
 import { buildConverterForType } from "./buildConverterForType"
 import { docData } from "rxfire/firestore"
 import { Model } from "../types/Model"
 import { ObsOrValue } from "../types/ObsOrValue"
 import { isObservable, of, BehaviorSubject, switchMap, tap } from "rxjs"
 import { CollectionModels } from "@/data/firebaseHelpers/CollectionModels"
+import { init } from "../initFb"
 
 type PossibleString = null | string | undefined
 
@@ -16,10 +17,10 @@ export const buildObsForDoc = <
   id: ObsOrValue<PossibleString>
 ) => {
   const idObs = isObservable(id) ? id : of(id)
-  const db = getFirestore()
-
   return idObs.pipe(
     switchMap((id) => {
+      const db = init()
+
       if (id) {
         const stringId = String(id)
         const docRef = doc(collection(db, collectionName), stringId)

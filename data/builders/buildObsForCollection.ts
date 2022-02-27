@@ -6,9 +6,18 @@ import {
 } from "firebase/firestore"
 import { buildConverterForType } from "./buildConverterForType"
 import { collectionData } from "rxfire/firestore"
-import { combineLatest, isObservable, mergeMap, of, switchMap, tap } from "rxjs"
+import {
+  BehaviorSubject,
+  combineLatest,
+  isObservable,
+  mergeMap,
+  of,
+  switchMap,
+  tap,
+} from "rxjs"
 import { ObsOrValue } from "../types/ObsOrValue"
 import { CollectionModels } from "@/data/firebaseHelpers/CollectionModels"
+import { init } from "../initFb"
 
 export const buildObsForCollection = <
   CollectionName extends keyof CollectionModels,
@@ -17,11 +26,12 @@ export const buildObsForCollection = <
   collectionName: CollectionName,
   queries: ObsOrValue<QueryConstraint>[]
 ) => {
-  const db = getFirestore()
-  const collectionRef = collection(db, collectionName)
-  const convertedCollection = collectionRef.withConverter(
-    buildConverterForType<M>()
-  )
+  const getCollectionRef = () => {
+    const db = init()
+    const collectionRef = collection(db, collectionName)
+    return collectionRef.withConverter(buildConverterForType<M>())
+  }
+
   const constraintObs = queries.map((constraint) => {
     return isObservable(constraint) ? constraint : of(constraint)
   })
@@ -33,7 +43,7 @@ export const buildObsForCollection = <
   const collectionObs = combinedConstraints.pipe(
     mergeMap((constraints) => {
       const nonNullConstraints = constraints.filter(Boolean)
-      const query = buildQuery(convertedCollection, ...nonNullConstraints)
+      const query = buildQuery(getCollectionRef(), ...nonNullConstraints)
       return collectionData(query, { idField: "uid" })
     })
   )
