@@ -53,6 +53,9 @@ const IndexPage: NextPage<
         >
           Go
         </button>
+        <div className="mt-20 text-center text-xs">
+          Made with love by Xinqing and David ❤️
+        </div>
       </div>
     </div>
   )
