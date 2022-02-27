@@ -3,22 +3,6 @@
 @tailwind components;
 @tailwind utilities;
 
-@font-face {
-  font-family: "Evolve Sans";
-  src: url("/fonts/made_evolve_sans/MADEEvolveSansRegular.otf");
-  font-style: normal;
-  font-weight: 400;
-  font-display: swap;
-}
-
-@font-face {
-  font-family: "Evolve Sans";
-  src: url("/fonts/made_evolve_sans/MADEEvolveSansBold.otf");
-  font-style: bold;
-  font-weight: 500;
-  font-display: swap;
-}
-
 html,
 body,
 #__next {
@@ -36,5 +20,9 @@ body,
 }
 
 body {
-  font-family: "Evolve Sans";
+  font-family: "Fredoka", sans-serif;
+}
+
+.fun-font {
+  font-family: "Shizuru", cursive;
 }

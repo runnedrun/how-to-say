@@ -15,7 +15,7 @@ const config = {
   webpack: (config, { dev }) => {
     return {
       ...config,
-      plugins: (config.plugins || []).concat([new CircularDependencyPlugin()]),
+      // plugins: (config.plugins || []).concat([new CircularDependencyPlugin()]),
     }
   },
   reactStrictMode: true,

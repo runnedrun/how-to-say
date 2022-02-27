@@ -5,7 +5,7 @@ import { fb, setters } from "@/data/fb"
 import { Name } from "@/data/types/Name"
 import TextArea from "@/tailwind-components/application_ui/input_groups/TextArea"
 import AudioReactRecorder, { RecordState } from "audio-react-recorder"
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import classNames from "classnames"
 import { getDownloadURL, getStorage, ref, uploadBytes } from "@firebase/storage"
 import e from "cors"
@@ -112,13 +112,15 @@ const AudioRecorder = ({ name }: AudioRecorderProps) => {
     <div className="mt-10">
       <div className="mb-5 flex justify-center">{controls}</div>
       <div className="flex justify-center">{recorder}</div>
-      <div className="flex justify-center">
-        <ReactAudioPlayer
-          className="mt-16"
-          src={localRecordingUrl || name.pronunciationRecording}
-          controls
-        />
-      </div>
+      {name.pronunciationRecording && (
+        <div className="flex justify-center">
+          <ReactAudioPlayer
+            className="mt-16"
+            src={localRecordingUrl || name.pronunciationRecording}
+            controls
+          />
+        </div>
+      )}
     </div>
   )
 }
@@ -128,7 +130,7 @@ const idTakenError = "Error: That url is already taken."
 export const EditableNameDisplay = config.EditableNameDisplay(
   ({
     data: { nameForEditKey },
-    props: { nameKey },
+    props: { nameKey, suggestedName },
     state: {
       savingText,
       setSavingText,
@@ -141,6 +143,7 @@ export const EditableNameDisplay = config.EditableNameDisplay(
     const name = nameForEditKey
 
     const onChange = (fieldName: keyof Name) => (value: string) => {
+      console.log("RINNING", fieldName, value)
       setSavingText("Editing...")
 
       clearTimeout(savingTextTimeout)
@@ -158,6 +161,16 @@ export const EditableNameDisplay = config.EditableNameDisplay(
       setters.name(nameKey, {
         [fieldName]: value,
       })
+    }
+
+    const checkIfIdIsValid = (name: string) => {
+      const valid = !new RegExp(/[^-\w]+/g).test(name)
+      if (!valid) {
+        setSavingText(
+          "Error: Invalid url. Please only use - and letters/numbers"
+        )
+      }
+      return valid
     }
 
     const checkIfIdIsTaken = async (id) => {
@@ -186,7 +199,9 @@ export const EditableNameDisplay = config.EditableNameDisplay(
       setSavingText("Editing...")
       setSavingIdTimeout(
         setTimeout(() => {
-          checkIfIdIsTaken(id)
+          if (checkIfIdIsValid(id)) {
+            checkIfIdIsTaken(id)
+          }
         }, 1000)
       )
     }
@@ -197,31 +212,52 @@ export const EditableNameDisplay = config.EditableNameDisplay(
       <div className="text-white">{savingText || "\u00A0"}</div>
     )
 
+    console.log(name.displayName, "wowojwoj")
+
+    useEffect(() => {
+      console.log("siuggest", suggestedName)
+      if (suggestedName) {
+        const isTaken = checkIfIdIsTaken(suggestedName)
+        if (isTaken) {
+          setSavingText(idTakenError)
+        } else {
+          setters.name(name.uid, {
+            nameId: suggestedName,
+          })
+        }
+      }
+    }, [suggestedName])
+
     return (
       <div className="min-h-full bg-black pb-10">
         <div className="flex justify-center pt-3">{errorText}</div>
+        <div className="mt-5 text-center text-white">
+          Copy this url to edit your name later: https://sayname.how/
+          {name.nameId}
+          ?editKey=
+          {name.uid}
+        </div>
         <div className="flex flex-col items-center justify-center p-5">
           <div className="flex items-center p-5 text-2xl">
             <div className="text-white">sayname.how/</div>
             <input
               type="text"
-              defaultValue={name.nameId}
+              defaultValue={name.nameId || suggestedName}
               onChange={(e) => onIdChange(e.target.value)}
             ></input>
           </div>
 
-          <div className="border-2 p-5 text-3xl md:text-9xl">
-            <InputGroup
-              label={{ text: "Name", className: "text-white" }}
+          <div className="border-2 p-5 text-3xl">
+            <input
               defaultValue={name.displayName}
-              onValueChange={onChange("displayName")}
-            ></InputGroup>
+              onChange={(e) => onChange("displayName")(e.target.value)}
+            ></input>
           </div>
           <div className="mt-16 text-3xl">
             <TextArea
               label={{
                 text:
-                  "Please describe the pronunciation of your name, as best you can.",
+                  "Please describe the pronunciation of your name, as best you can. (optional)",
                 className: "text-white",
               }}
               defaultValue={name.pronunciationDescription}
@@ -231,6 +267,15 @@ export const EditableNameDisplay = config.EditableNameDisplay(
           <div>
             <AudioRecorder name={name} />
           </div>
+          {name.nameId && name.pronunciationRecording && (
+            <a
+              href={`/${name.nameId}`}
+              target="_blank"
+              className="fun-font mt-5 cursor-pointer rounded-md border-2 border-white p-4 text-white"
+            >
+              Check it out!
+            </a>
+          )}
         </div>
       </div>
     )

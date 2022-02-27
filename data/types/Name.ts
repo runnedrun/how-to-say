@@ -1,8 +1,8 @@
 import { Model } from "./Model"
 
 export type Name = Model<{
-  nameId: string
+  nameId?: string
   displayName: string
-  pronunciationDescription: string
-  pronunciationRecording: string
+  pronunciationDescription?: string
+  pronunciationRecording?: string
 }>
