@@ -5,7 +5,7 @@ import { fb, setters } from "@/data/fb"
 import { Name } from "@/data/types/Name"
 import TextArea from "@/tailwind-components/application_ui/input_groups/TextArea"
 import AudioReactRecorder, { RecordState } from "audio-react-recorder"
-import { useEffect, useState } from "react"
+import { useEffect, useRef, useState } from "react"
 import classNames from "classnames"
 import { getDownloadURL, getStorage, ref, uploadBytes } from "@firebase/storage"
 import e from "cors"
@@ -16,38 +16,38 @@ import {
   collection,
   getDocs,
 } from "firebase/firestore"
+import { BrowserView, MobileView } from "react-device-detect"
+
+const buttonClasses = "rounded-md bg-white p-2 mr-2 cursor-pointer"
+
+const uploadFile = async (blobToUpload: any, nameId: string) => {
+  const storage = getStorage()
+  const fileRef = ref(storage, `pronunciation_recordings/name-${nameId}}.jpg`)
+  await uploadBytes(fileRef, blobToUpload)
+  const url = await getDownloadURL(fileRef)
+  return setters.name(nameId, {
+    pronunciationRecording: url,
+  })
+}
 
 type AudioRecorderProps = {
   name: Name
 }
-const AudioRecorder = ({ name }: AudioRecorderProps) => {
+const DesktopAudioRecorder = ({ name }: AudioRecorderProps) => {
   const [recordingState, setRecordingState] = useState(null as RecordState)
   const [localRecordingUrl, setLocalRecordingUrl] = useState(null as string)
   const [blobToUpload, setBlobToUpload] = useState(null)
   const [uploading, setUploading] = useState(false)
 
-  const upload = () => {
-    const storage = getStorage()
+  const upload = async () => {
     setUploading(true)
-    const fileRef = ref(
-      storage,
-      `pronunciation_recordings/test-${Date.now()}.jpg`
-    )
-    const upload = uploadBytes(fileRef, blobToUpload)
-    upload.then(() => {
-      setUploading(false)
-      getDownloadURL(fileRef).then((url) => {
-        setters.name(name.uid, {
-          pronunciationRecording: url,
-        })
-        setLocalRecordingUrl(null)
-        setBlobToUpload(null)
-        setRecordingState(null)
-      })
-    })
+    await uploadFile(blobToUpload, name.uid)
+    setUploading(false)
+    setLocalRecordingUrl(null)
+    setBlobToUpload(null)
+    setRecordingState(null)
   }
 
-  const buttonClasses = "rounded-md bg-white p-2 mr-2 cursor-pointer"
   let controls = <div></div>
   if (!recordingState) {
     controls = (
@@ -112,7 +112,56 @@ const AudioRecorder = ({ name }: AudioRecorderProps) => {
     <div className="mt-10">
       <div className="mb-5 flex justify-center">{controls}</div>
       <div className="flex justify-center">{recorder}</div>
-      {name.pronunciationRecording && (
+      {(name.pronunciationRecording || localRecordingUrl) && (
+        <div className="flex justify-center">
+          <ReactAudioPlayer
+            className="mt-16"
+            src={localRecordingUrl || name.pronunciationRecording}
+            controls
+          />
+        </div>
+      )}
+    </div>
+  )
+}
+
+const MobileAudioRecorder = ({ name }: AudioRecorderProps) => {
+  const [localRecordingUrl, setLocalRecording] = useState(null as string)
+  const [localRecordingBlob, setLocalRecordingBlob] = useState(
+    null as ArrayBuffer
+  )
+  const inputRef = useRef(null)
+  return (
+    <div className="flex flex-col items-center">
+      <input
+        ref={inputRef}
+        onChange={async (e) => {
+          console.log("new file")
+          const file = e.target.files[0]
+          const buffer = await file.arrayBuffer()
+          const url = URL.createObjectURL(file)
+          setLocalRecordingBlob(buffer)
+          setLocalRecording(url)
+        }}
+        type="file"
+        accept="audio/*"
+        capture
+        className={classNames(buttonClasses, "mt-5")}
+      />
+      {localRecordingUrl && (
+        <div
+          className={classNames(buttonClasses, "mt-5")}
+          onClick={async () => {
+            await uploadFile(localRecordingBlob, name.uid)
+            inputRef.current.value = null
+            setLocalRecording(null)
+            setLocalRecordingBlob(null)
+          }}
+        >
+          Upload
+        </div>
+      )}
+      {(name.pronunciationRecording || localRecordingUrl) && (
         <div className="flex justify-center">
           <ReactAudioPlayer
             className="mt-16"
@@ -265,7 +314,12 @@ export const EditableNameDisplay = config.EditableNameDisplay(
             ></TextArea>
           </div>
           <div>
-            <AudioRecorder name={name} />
+            <BrowserView>
+              <DesktopAudioRecorder name={name} />
+            </BrowserView>
+            <MobileView>
+              <MobileAudioRecorder name={name} />
+            </MobileView>
           </div>
           {name.nameId && name.pronunciationRecording && (
             <a

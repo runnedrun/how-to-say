@@ -52,6 +52,7 @@
     "react": "^17.0.2",
     "react-audio-player": "^0.17.0",
     "react-clipboard.js": "^2.0.16",
+    "react-device-detect": "^2.1.2",
     "react-dom": "17.0.2",
     "react-headless-phone-input": "^2.0.0",
     "react-modal-hook": "^3.0.0",
