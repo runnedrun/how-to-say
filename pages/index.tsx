@@ -7,6 +7,7 @@ import logo from "../public/logo.jpeg"
 import Image from "next/image"
 import { creators } from "@/data/fb"
 import { useRouter } from "next/router"
+import { BrowserView, MobileView } from "react-device-detect"
 
 const IndexPage: NextPage<
   InferGetServerSidePropsType<typeof getServerSideProps>
@@ -42,17 +43,25 @@ const IndexPage: NextPage<
             Get your link in 1 minute.
           </div>
         </div>
-        <input
-          className="w-3/12 rounded-md p-3 text-black"
-          placeholder="your name"
-          onChange={(event) => setName(event.target.value)}
-        ></input>
-        <button
-          className="fun-font mt-5 rounded-md border-2 border-white p-2 text-2xl"
-          onClick={createNameAndRedirect}
-        >
-          Go
-        </button>
+        <BrowserView>
+          <input
+            className="w-3/12 rounded-md p-3 text-black"
+            placeholder="your name"
+            onChange={(event) => setName(event.target.value)}
+          ></input>
+
+          <button
+            className="fun-font mt-5 rounded-md border-2 border-white p-2 text-2xl"
+            onClick={createNameAndRedirect}
+          >
+            Go
+          </button>
+        </BrowserView>
+        <MobileView>
+          <div className="text-2xl">
+            Open this site in a desktop browser to create your name!
+          </div>
+        </MobileView>
         <div className="mt-20 text-center text-xs">
           Made with love by Xinqing and David ❤️
         </div>
