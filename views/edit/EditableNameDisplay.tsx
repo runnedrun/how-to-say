@@ -280,9 +280,8 @@ export const EditableNameDisplay = config.EditableNameDisplay(
       <div className="min-h-full bg-black pb-10">
         <div className="flex justify-center pt-3">{errorText}</div>
         <div className="mt-5 text-center text-white">
-          Copy this url to edit your name later: https://sayname.how/
-          {name.nameId}
-          ?editKey=
+          Copy this url to edit your name later:
+          https://sayname.how/edit?editKey=
           {name.uid}
         </div>
         <div className="flex flex-col items-center justify-center p-5">
