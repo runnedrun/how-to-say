@@ -103,7 +103,7 @@ const DesktopAudioRecorder = ({ name }: AudioRecorderProps) => {
         canvasHeight={"50px"}
         state={recordingState}
         onStop={onStop}
-        type="audio/ogg"
+        type="audio/mp3"
       />
     )
   }
@@ -136,7 +136,6 @@ const MobileAudioRecorder = ({ name }: AudioRecorderProps) => {
       <input
         ref={inputRef}
         onChange={async (e) => {
-          console.log("new file")
           const file = e.target.files[0]
           const buffer = await file.arrayBuffer()
           const url = URL.createObjectURL(file)
@@ -144,7 +143,7 @@ const MobileAudioRecorder = ({ name }: AudioRecorderProps) => {
           setLocalRecording(url)
         }}
         type="file"
-        accept="audio/*"
+        accept="audio/mp3"
         capture
         className={classNames(buttonClasses, "mt-5")}
       />
